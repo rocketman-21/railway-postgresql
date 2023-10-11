@@ -19,6 +19,9 @@ RUN apt-get update \
 		&& rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /docker-entrypoint-initdb.d
+RUN mv /docker-entrypoint-initdb.d/init-ssl.sh /docker-entrypoint-initdb.d/10_init-ssl.sh
 
-COPY ./initdb-postgis.sh /docker-entrypoint-initdb.d/10_postgis.sh
+COPY ./initdb-postgis.sh /docker-entrypoint-initdb.d/50_postgis.sh
 COPY ./update-postgis.sh /usr/local/bin
+
+CMD ["postgres", "--port=5432"]
