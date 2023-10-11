@@ -18,10 +18,12 @@ RUN apt-get update \
 				postgresql-$PG_MAJOR-postgis-$POSTGIS_MAJOR-scripts \
 		&& rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /docker-entrypoint-initdb.d
-RUN mv /docker-entrypoint-initdb.d/init-ssl.sh /docker-entrypoint-initdb.d/20_init-ssl.sh
-
+# Add init script and update script
 COPY ./initdb-postgis.sh /docker-entrypoint-initdb.d/10_postgis.sh
 COPY ./update-postgis.sh /usr/local/bin
+
+# Set permissions
+RUN chmod +x /docker-entrypoint-initdb.d/10_postgis.sh
+RUN chmod +x /usr/local/bin/update-postgis.sh
 
 CMD ["postgres", "--port=5432"]
