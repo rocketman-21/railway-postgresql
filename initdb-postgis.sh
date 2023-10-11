@@ -6,14 +6,14 @@ set -e
 export PGUSER="$POSTGRES_USER"
 
 # Create the 'template_postgis' template db
-psql <<- 'EOSQL'
+psql -h /var/run/postgresql <<- 'EOSQL'
 CREATE DATABASE template_postgis IS_TEMPLATE true;
 EOSQL
 
 # Load PostGIS into both template_database and $POSTGRES_DB
 for DB in template_postgis "$POSTGRES_DB"; do
 	echo "Loading PostGIS extensions into $DB"
-	psql --dbname="$DB" <<-'EOSQL'
+	psql -h /var/run/postgresql --dbname="$DB" <<-'EOSQL'
 		CREATE EXTENSION IF NOT EXISTS postgis;
 		CREATE EXTENSION IF NOT EXISTS postgis_topology;
 		-- Reconnect to update pg_setting.resetval
