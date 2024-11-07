@@ -4,7 +4,11 @@ LABEL maintainer="Clever Cactus - https://clevercactus.nl" \
       org.opencontainers.image.description="PostGIS 3.4.0+dfsg-1.pgdg120+1 spatial database extension with PostgreSQL 15" \
       org.opencontainers.image.source="https://github.com/joggienl/railway-postgresql"
 
-ARG CACHEBUST=1  # Force rebuild
+# Add a build argument to force cache invalidation
+ARG CACHEBUST=1
+
+# Use the build argument in a command
+RUN echo "Cache bust value: $CACHEBUST"
 
 ENV POSTGIS_MAJOR 3
 ENV POSTGIS_VERSION 3.4.0+dfsg-1.pgdg120+1
@@ -56,13 +60,10 @@ COPY ./initdb-pg_parquet.sql /docker-entrypoint-initdb.d/11_pg_parquet.sql
 COPY ./update-postgis.sh /usr/local/bin
 
 # Set permissions
-RUN chmod +x /docker-entrypoint-initdb.d/10_postgis.sh
+RUN chmod +x /docker-entrypoint-initdb.d/*.sh
 RUN chmod +x /usr/local/bin/update-postgis.sh
 
-# Optionally set the shared_preload_libraries via CMD or ENV
-# Option A: Using CMD
-CMD ["postgres", "--port=5432", "-c", "shared_preload_libraries=pg_parquet"]
+# Set shared_preload_libraries via environment variable
+ENV POSTGRES_SHARED_PRELOAD_LIBRARIES pg_parquet
 
-# Option B: Using ENV (uncomment if preferred)
-# ENV POSTGRES_SHARED_PRELOAD_LIBRARIES pg_parquet
-
+CMD ["postgres", "--port=5432"]
