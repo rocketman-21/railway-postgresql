@@ -30,8 +30,8 @@ RUN apt-get update \
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-# Install cargo-pgrx
-RUN cargo install cargo-pgrx
+# Install cargo-pgrx at version 0.12.6
+RUN cargo install cargo-pgrx --version 0.12.6 --locked
 
 # Initialize pgrx for PostgreSQL 15
 RUN cargo pgrx init --pg15 /usr/lib/postgresql/15/bin/pg_config
