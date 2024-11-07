@@ -50,12 +50,14 @@ RUN apt-get remove -y build-essential libssl-dev pkg-config curl git \
 
 # Add init scripts
 COPY ./initdb-postgis.sh /docker-entrypoint-initdb.d/10_postgis.sh
-COPY ./initdb-pg_parquet.sh /docker-entrypoint-initdb.d/11_pg_parquet.sh
+COPY ./initdb-pg_parquet.sql /docker-entrypoint-initdb.d/11_pg_parquet.sql
 COPY ./update-postgis.sh /usr/local/bin
 
 # Set permissions
 RUN chmod +x /docker-entrypoint-initdb.d/10_postgis.sh
-RUN chmod +x /docker-entrypoint-initdb.d/11_pg_parquet.sh
 RUN chmod +x /usr/local/bin/update-postgis.sh
+
+# Set shared_preload_libraries via environment variable
+ENV POSTGRES_SHARED_PRELOAD_LIBRARIES pg_parquet
 
 CMD ["postgres", "--port=5432"]
