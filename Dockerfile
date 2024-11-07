@@ -23,6 +23,7 @@ RUN apt-get update \
        curl \
        ca-certificates \
        git \
+       postgresql-server-dev-15 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Rust
@@ -33,7 +34,7 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 RUN cargo install cargo-pgrx
 
 # Initialize pgrx for PostgreSQL 15
-RUN cargo pgrx init --pg15 $(which pg_config)
+RUN cargo pgrx init --pg15 /usr/lib/postgresql/15/bin/pg_config
 
 # Clone pg_parquet repository
 RUN git clone https://github.com/CrunchyData/pg_parquet.git /pg_parquet
